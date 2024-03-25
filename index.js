@@ -113,14 +113,27 @@ app.post("/mentors", async (req, res) => {
     res.status(500).json({ error: "Error creating mentor" });
   }
 });
-
+// show metors data
 app.get("/mentors", async (req, res) => {
-    try {
-      // Fetch all mentors from the database
-      const mentors = await Mentor.find();
-      
-      // Send the mentors data in the response
-      res.status(200).json(mentors);
+  try {
+    const mentors = await Mentor.find();
+    let mentorList = '';
+    mentors.forEach(mentor => {
+      mentorList += `
+        <div class="mentor" style="margin-bottom: 20px;">
+          <h2 style="text-align: center; color: #333;">${mentor.name}</h2>
+          <p style="color: #444;">Email: ${mentor.email}</p>
+        </div>
+      `;
+    });
+    const htmlResponse = `
+      <body>
+        <div class="container">
+          ${mentorList}
+        </div>
+      </body>
+    `;
+    res.status(200).send(`${commonStyles}${htmlResponse}`);
     } catch (error) {
       console.error("Error fetching mentors:", error);
       res.status(500).json({ error: "Error fetching mentors" });
@@ -130,30 +143,62 @@ app.get("/mentors", async (req, res) => {
 app.post("/students", async (req, res) => {
   try {
     const student = await Student.create(req.body);
-    res.status(201).json(student);
+    const htmlResponse = `
+      <body>
+        <div class="container">
+          <h2 style="text-align: center; color: #333;">Student Added</h2>
+          <p style="color: #444;">Student name: ${student.name}</p>
+          <p style="color: #444;">Student email: ${student.email}</p>
+        </div>
+      </body>
+    `;
+    res.status(201).send(`${commonStyles}${htmlResponse}`);
   } catch (error) {
     console.error("Error creating student:", error);
     res.status(500).json({ error: "Error creating student" });
   }
 });
+// Get all Students API
 app.get("/students", async (req, res) => {
-    try {
-      // Fetch all mentors from the database
-      const students = await Student.find();
-      
-      // Send the mentors data in the response
-      res.status(200).json(students);
-    } catch (error) {
-      console.error("Error fetching mentors:", error);
-      res.status(500).json({ error: "Error fetching mentors" });
-    }
-  });
+  try {
+    const students = await Student.find();
+    let studentList = '';
+    students.forEach(student => {
+      studentList += `
+        <div class="student" style="margin-bottom: 20px;">
+          <h2 style="text-align: center; color: #333;">${student.name}</h2>
+          <p style="color: #444;">Email: ${student.email}</p>
+        </div>
+      `;
+    });
+    const htmlResponse = `
+      <body>
+        <div class="container">
+          ${studentList}
+        </div>
+      </body>
+    `;
+    res.status(200).send(`${commonStyles}${htmlResponse}`);
+  } catch (error) {
+    console.error("Error fetching students:", error);
+    res.status(500).json({ error: "Error fetching students" });
+  }
+});
 // Assign Student to Mentor API
 app.post("/mentors/:mentorId/students/:studentId/assign", async (req, res) => {
   try {
     const { mentorId, studentId } = req.params;
     const student = await Student.findByIdAndUpdate(studentId, { mentor: mentorId }, { new: true });
-    res.json(student).statusMessage("Assigned student to mentor");
+    const htmlResponse = `
+      <body>
+        <div class="container">
+          <h2 style="text-align: center; color: #333;">Student Assigned to Mentor</h2>
+          <p style="color: #444;">Student ID: ${student._id}</p>
+          <p style="color: #444;">Assigned Mentor ID: ${mentorId}</p>
+        </div>
+      </body>
+    `;
+    res.send(`${commonStyles}${htmlResponse}`);
   } catch (error) {
     console.error("Error assigning student to mentor:", error);
     res.status(500).json({ error: "Error assigning student to mentor" });
@@ -166,7 +211,16 @@ app.post("/mentors/:mentorId/students/assign-multiple", async (req, res) => {
     const { mentorId } = req.params;
     const { studentIds } = req.body;
     const students = await Student.updateMany({ _id: { $in: studentIds } }, { mentor: mentorId });
-    res.json(students).statusMessage("Assigned multiple student"); 
+    const htmlResponse = `
+      <body>
+        <div class="container">
+          <h2 style="text-align: center; color: #333;">Multiple Students Assigned to Mentor</h2>
+          <p style="color: #444;">Number of Students: ${students.nModified}</p>
+          <p style="color: #444;">Assigned Mentor ID: ${mentorId}</p>
+        </div>
+      </body>
+    `;
+    res.send(`${commonStyles}${htmlResponse}`);
   } catch (error) {
     console.error("Error assigning multiple students to mentor:", error);
     res.status(500).json({ error: "Error assigning multiple students to mentor" });
@@ -179,7 +233,16 @@ app.put("/students/:studentId/assign-mentor", async (req, res) => {
     const { studentId } = req.params;
     const { mentorId } = req.body;
     const student = await Student.findByIdAndUpdate(studentId, { mentor: mentorId }, { new: true });
-    res.json(student).statusMessage("new mentor is assigned");
+    const htmlResponse = `
+      <body>
+        <div class="container">
+          <h2 style="text-align: center; color: #333;">New Mentor Assigned to Student</h2>
+          <p style="color: #444;">Student ID: ${student._id}</p>
+          <p style="color: #444;">New Mentor ID: ${mentorId}</p>
+        </div>
+      </body>
+    `;
+    res.send(`${commonStyles}${htmlResponse}`);
   } catch (error) {
     console.error("Error assigning or changing mentor for student:", error);
     res.status(500).json({ error: "Error assigning or changing mentor for student" });
@@ -191,7 +254,23 @@ app.get("/mentors/:mentorId/students", async (req, res) => {
   try {
     const { mentorId } = req.params;
     const students = await Student.find({ mentor: mentorId });
-    res.json(students);
+    let studentList = '';
+    students.forEach(student => {
+      studentList += `
+        <div class="student" style="margin-bottom: 20px;">
+          <h2 style="text-align: center; color: #333;">${student.name}</h2>
+          <p style="color: #444;">Email: ${student.email}</p>
+        </div>
+      `;
+    });
+    const htmlResponse = `
+      <body>
+        <div class="container">
+          ${studentList}
+        </div>
+      </body>
+    `;
+    res.send(`${commonStyles}${htmlResponse}`);
   } catch (error) {
     console.error("Error fetching students for mentor:", error);
     res.status(500).json({ error: "Error fetching students for mentor" });
@@ -203,7 +282,16 @@ app.get("/students/:studentId/previous-mentor", async (req, res) => {
   try {
     const { studentId } = req.params;
     const student = await Student.findById(studentId).populate('mentor');
-    res.json(student.mentor);
+    const htmlResponse = `
+      <body>
+        <div class="container">
+          <h2 style="text-align: center; color: #333;">Previous Mentor for Student</h2>
+          <p style="color: #444;">Student ID: ${student._id}</p>
+          <p style="color: #444;">Previous Mentor: ${student.mentor ? student.mentor.name : "None"}</p>
+        </div>
+      </body>
+    `;
+    res.send(`${commonStyles}${htmlResponse}`);
   } catch (error) {
     console.error("Error fetching previous mentor for student:", error);
     res.status(500).json({ error: "Error fetching previous mentor for student" });
