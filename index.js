@@ -35,10 +35,7 @@ name: {
   type: String,
   required: true,
 },
-age: {
-  type: Number,
-  required: true,
-},
+
 mentor: {
   type: mongoose.Schema.Types.ObjectId,
   ref: 'Mentor',
