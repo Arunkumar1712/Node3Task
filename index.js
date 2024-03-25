@@ -142,7 +142,8 @@ app.get("/mentors", async (req, res) => {
 // Create Student API
 app.post("/students", async (req, res) => {
   try {
-    const student = await Student.create(req.body);
+    const { name, email, mentor } = req.body; // Extracting name, email, and mentor from the request body
+    const student = await Student.create({ name, email, mentor }); // Creating the student with extracted fields
     const htmlResponse = `
       <body>
         <div class="container">
@@ -158,6 +159,7 @@ app.post("/students", async (req, res) => {
     res.status(500).json({ error: "Error creating student" });
   }
 });
+
 // Get all Students API
 app.get("/students", async (req, res) => {
   try {
