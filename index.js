@@ -156,19 +156,9 @@ app.get("/mentors", async (req, res) => {
 // Create Student API
 app.post("/students", async (req, res) => {
   try {
-    const { name, email, mentor } = req.body; // Extracting name, email, and mentor from the request body
-    const student = await Student.create({ name, email, mentor }); // Creating the student with extracted fields
-    // const htmlResponse = `
-    //   <body>
-    //     <div class="container">
-    //       <h2 style="text-align: center; color: #333;">Student Added</h2>
-    //       <p style="color: #444;">Student name: ${student.name}</p>
-    //       <p style="color: #444;">Student email: ${student.email}</p>
-    //     </div>
-    //   </body>
-    // `;
-    // res.status(201).send(`${commonStyles}${htmlResponse}`);
-    res.json(student)
+    const { name, email, mentor, previousMentor } = req.body; // Extracting name, email, mentor, and previousMentor from the request body
+    const student = await Student.create({ name, email, mentor, previousMentor }); // Creating the student with extracted fields
+    res.status(201).json(student);
   } catch (error) {
     console.error("Error creating student:", error);
     res.status(500).json({ error: "Error creating student" });
@@ -179,15 +169,14 @@ app.post("/students", async (req, res) => {
 app.get("/students", async (req, res) => {
   try {
     const students = await Student.find();
-    let studentList = '';
-    students.forEach(student => {
-      studentList += `
-        <div class="student" style="margin-bottom: 20px;">
-          <h2 style="text-align: center; color: #333;">${student.name}</h2>
-          <p style="color: #444;">Email: ${student.email}</p>
-        </div>
-      `;
-    });
+    const studentList = students.map(student => `
+      <div class="student" style="margin-bottom: 20px;">
+        <h2 style="text-align: center; color: #333;">${student.name}</h2>
+        <p style="color: #444;">Email: ${student.email}</p>
+        <p style="color: #444;">Mentor: ${student.mentor}</p>
+       
+      </div>
+    `).join("");
     const htmlResponse = `
       <body>
         <div class="container">
@@ -201,6 +190,7 @@ app.get("/students", async (req, res) => {
     res.status(500).json({ error: "Error fetching students" });
   }
 });
+
 // Assign Student to Mentor API
 app.post("/mentors/:mentorId/students/:studentId/assign", async (req, res) => {
   try {
