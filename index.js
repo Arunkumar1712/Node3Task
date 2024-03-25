@@ -27,10 +27,27 @@ const mentorSchema = new mongoose.Schema({
 });
 
 const studentSchema = new mongoose.Schema({
-  name: String,
-  email: String,
-  mentor: { type: mongoose.Schema.Types.ObjectId, ref: 'Mentor' },
-});
+//   name: String,
+//   email: String,
+//   mentor: { type: mongoose.Schema.Types.ObjectId, ref: 'Mentor' },
+// }
+name: {
+  type: String,
+  required: true,
+},
+age: {
+  type: Number,
+  required: true,
+},
+mentor: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'Mentor',
+},
+previousMentor: {
+  type: mongoose.Schema.Types.ObjectId,
+  ref: 'Mentor',
+},}
+);
 
 const Mentor = mongoose.model('Mentor', mentorSchema);
 const Student = mongoose.model('Student', studentSchema);
