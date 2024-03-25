@@ -107,7 +107,7 @@ app.post("/mentors", async (req, res) => {
         </div>
       </body>
     `;
-    res.status(201).json(mentor).send(htmlResponse,"New mentor is added");
+    res.status(201).send(htmlResponse,mentor,"New mentor is added");
   } catch (error) {
     console.error("Error creating mentor:", error);
     res.status(500).json({ error: "Error creating mentor" });
