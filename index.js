@@ -40,39 +40,43 @@ mongoose.connect(`${MONGO_URL}/${DBname}`)
   .then(() => console.log("MongoDB connected"))
   .catch(err => console.error("MongoDB connection error:", err));
 
+
+// Define the common inline styles
+const commonStyles = `
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+    }
+    .container {
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    h1 {
+      text-align: center;
+      color: #333;
+    }
+    h4 {
+      margin-bottom: 10px;
+      color: #666;
+    }
+    p {
+      color: #444;
+    }
+  </style>
+`;
+
 // API endpoints
 
 // Api for Home page
-app.get("/",async(req,res)=>{
-  res.send(`
-  <style>
-        body {
-          font-family: Arial, sans-serif;
-          margin: 0;
-          padding: 0;
-          background-color: #f0f0f0;
-        }
-        .container {
-          max-width: 800px;
-          margin: 50px auto;
-          padding: 20px;
-          background-color: #fff;
-          border-radius: 8px;
-          box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-        }
-        h1 {
-          text-align: center;
-          color: #333;
-        }
-        h4 {
-          margin-bottom: 10px;
-          color: #666;
-        }
-        p {
-          color: #444;
-        }
-      </style>
-    
+app.get("/", async (req, res) => {
+  const htmlResponse = `
     <body>
       <div class="container">
         <h1>Welcome to Mentor 👩‍🏫 and Student 👨‍🎓 Assigning with Database</h1>
@@ -84,21 +88,29 @@ app.get("/",async(req,res)=>{
         <h4>Send a PUT request to /students/:studentId/assign-mentor to assign or change the mentor for a student</h4>
         <h4>Send a GET request to /mentors/:mentorId/students to view all students assigned to a particular mentor.</h4>
         <h4>Send a GET request to /students/:studentId/previous-mentor to view the previously assigned mentor for a particular student.</h4>
-    
       </div>
     </body>
-    
-  `);
+  `;
+  res.send(`${commonStyles}${htmlResponse}`);
 });
-
 // Create Mentor API
 app.post("/mentors", async (req, res) => {
   try {
     const mentor = await Mentor.create(req.body);
-    res.status(201).json(mentor).statusMessage("Newmentor Added");
+    const htmlResponse = `
+      <body style="font-family: Arial, sans-serif; margin: 0; padding: 0; background-color: #f0f0f0;">
+        <div class="container" style="max-width: 600px; margin: 50px auto; padding: 20px; background-color: #fff; border-radius: 8px; box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);">
+          <h2 style="text-align: center; color: #333;">Mentor Added</h2>
+          <p style="color: #444;">Mentor name: ${mentor.name}</p>
+          <p style="color: #444;">Mentor email: ${mentor.email}</p>
+          <p>New mentor is added</p>
+        </div>
+      </body>
+    `;
+    res.status(201).json(mentor).send(htmlResponse,"New mentor is added");
   } catch (error) {
     console.error("Error creating mentor:", error);
-    res.status(500).json({ error: "Err or creating mentor" });
+    res.status(500).json({ error: "Error creating mentor" });
   }
 });
 
@@ -118,7 +130,7 @@ app.get("/mentors", async (req, res) => {
 app.post("/students", async (req, res) => {
   try {
     const student = await Student.create(req.body);
-    res.status(201).json(student).statusMessage("Student Added");
+    res.status(201).json(student);
   } catch (error) {
     console.error("Error creating student:", error);
     res.status(500).json({ error: "Error creating student" });
