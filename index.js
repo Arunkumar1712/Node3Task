@@ -137,7 +137,7 @@ app.get("/mentors", async (req, res) => {
         <div class="mentor" style="margin-bottom: 20px;">
           <h2 style="text-align: center; color: #333;">${mentor.name}</h2>
           <p style="color: #444;">Email: ${mentor.email}</p>
-          <p style="color: #444;">Email: ${mentor._id}</p>
+          <p style="color: #444;">mentor_id: ${mentor._id}</p>
         </div>
       `;
     });
