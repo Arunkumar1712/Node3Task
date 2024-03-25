@@ -35,15 +35,15 @@ name: {
   type: String,
   required: true,
 },
-
+email: {
+  type: String,
+  required: true,
+},
 mentor: {
   type: mongoose.Schema.Types.ObjectId,
   ref: 'Mentor',
 },
-previousMentor: {
-  type: mongoose.Schema.Types.ObjectId,
-  ref: 'Mentor',
-},}
+}
 );
 
 const Mentor = mongoose.model('Mentor', mentorSchema);
@@ -156,8 +156,8 @@ app.get("/mentors", async (req, res) => {
 // Create Student API
 app.post("/students", async (req, res) => {
   try {
-    const { name, email, mentor, previousMentor } = req.body; // Extracting name, email, mentor, and previousMentor from the request body
-    const student = await Student.create({ name, email, mentor, previousMentor }); // Creating the student with extracted fields
+    const { name, email, mentor } = req.body; // Extracting name, email, mentor, and previousMentor from the request body
+    const student = await Student.create({ name, email, mentor }); // Creating the student with extracted fields
     res.status(201).json(student);
   } catch (error) {
     console.error("Error creating student:", error);
