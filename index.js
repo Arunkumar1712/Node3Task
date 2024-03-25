@@ -148,7 +148,7 @@ app.post("/students", async (req, res) => {
       <body>
         <div class="container">
           <h2 style="text-align: center; color: #333;">Student Added</h2>
-          <p style="color: #444;">Student name: ${student.name}</p>
+          <p style="color: #444;">Student name: ${student.Name}</p>
           <p style="color: #444;">Student email: ${student.email}</p>
         </div>
       </body>
