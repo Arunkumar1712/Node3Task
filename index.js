@@ -144,16 +144,17 @@ app.post("/students", async (req, res) => {
   try {
     const { name, email, mentor } = req.body; // Extracting name, email, and mentor from the request body
     const student = await Student.create({ name, email, mentor }); // Creating the student with extracted fields
-    const htmlResponse = `
-      <body>
-        <div class="container">
-          <h2 style="text-align: center; color: #333;">Student Added</h2>
-          <p style="color: #444;">Student name: ${student.Name}</p>
-          <p style="color: #444;">Student email: ${student.email}</p>
-        </div>
-      </body>
-    `;
-    res.status(201).send(`${commonStyles}${htmlResponse}`);
+    // const htmlResponse = `
+    //   <body>
+    //     <div class="container">
+    //       <h2 style="text-align: center; color: #333;">Student Added</h2>
+    //       <p style="color: #444;">Student name: ${student.name}</p>
+    //       <p style="color: #444;">Student email: ${student.email}</p>
+    //     </div>
+    //   </body>
+    // `;
+    // res.status(201).send(`${commonStyles}${htmlResponse}`);
+    res.json(student)
   } catch (error) {
     console.error("Error creating student:", error);
     res.status(500).json({ error: "Error creating student" });
